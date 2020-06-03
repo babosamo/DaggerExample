@@ -2,7 +2,6 @@ package com.babosamo.daggerexample.ui.login
 
 import android.app.Activity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -14,25 +13,32 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.babosamo.daggerexample.App
 
 import com.babosamo.daggerexample.R
+import com.babosamo.daggerexample.di.component.LoginActivityComponent
+import com.babosamo.daggerexample.di.module.LoginActivityModule
+import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
+    @Inject
+    lateinit var loginViewModel: LoginViewModel
+
+    lateinit var loginActivityComponent: LoginActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
 
+        loginActivityComponent = (application as App).appComponent.loginActivityComponentBuilder().setModule(LoginActivityModule()).setActivity(this).build()
+        loginActivityComponent.inject(this)
+
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
-
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
-                .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
