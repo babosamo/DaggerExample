@@ -23,5 +23,4 @@ class LoginActivityModule {
         return ViewModelProviders.of(loginActivity, LoginViewModelFactory()).get(LoginViewModel::class.java)
     }
 
-
 }

@@ -16,24 +16,30 @@ import android.widget.Toast
 import com.babosamo.daggerexample.App
 
 import com.babosamo.daggerexample.R
-import com.babosamo.daggerexample.di.component.LoginActivityComponent
+import com.babosamo.daggerexample.di.component.LoginActivitySubComponent
 import com.babosamo.daggerexample.di.module.LoginActivityModule
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), HasAndroidInjector {
+
+    @Inject
+    lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
     @Inject
     lateinit var loginViewModel: LoginViewModel
 
-    lateinit var loginActivityComponent: LoginActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
 
-        loginActivityComponent = (application as App).appComponent.loginActivityComponentBuilder().setModule(LoginActivityModule()).setActivity(this).build()
-        loginActivityComponent.inject(this)
 
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
@@ -116,6 +122,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector
     }
 }
 
