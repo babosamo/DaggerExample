@@ -1,20 +1,16 @@
 package com.babosamo.daggerexample.di
 
-import com.babosamo.daggerexample.di.component.LoginActivitySubComponent
+import com.babosamo.daggerexample.di.module.LoginActivityModule
+import com.babosamo.daggerexample.di.scope.ActivityScope
 import com.babosamo.daggerexample.ui.login.LoginActivity
-import dagger.Binds
 import dagger.Module
-import dagger.android.AndroidInjector
-import dagger.multibindings.ClassKey
-import dagger.multibindings.IntoMap
+import dagger.android.ContributesAndroidInjector
 
-@Module(subcomponents = [LoginActivitySubComponent::class])
+@Module
 abstract class AppModule {
 
-    @Binds
-    @IntoMap
-    @ClassKey(LoginActivity::class)
-    abstract fun bindAndroidInjectorFactory(factory: LoginActivitySubComponent.Factory): AndroidInjector.Factory<*>
-
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [LoginActivityModule::class])
+    abstract fun loginActivity(): LoginActivity
 }
 
